@@ -69,7 +69,8 @@ converted to an `usize`. Let's break this type down:
 1. `BoxMeUp` is an internal trait. It is implemented for `PanicPayload`
 (a wrapper around the user-supplied payload type), and has a method
 `fn box_me_up(&mut self) -> *mut (dyn Any + Send)`.
-This method takes the user-provided payload (`T: Any + Send`), boxes it, and converts the box to a raw pointer.
+This method takes the user-provided payload (`T: Any + Send`),
+boxes it, and converts the box to a raw pointer.
 
 2. When we call `__rust_start_panic`, we have an `&mut dyn BoxMeUp`.
 However, this is a fat pointer (twice the size of a `usize`).
