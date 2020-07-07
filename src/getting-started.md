@@ -4,6 +4,12 @@ This documentation is _not_ intended to be comprehensive; it is meant to be a
 quick guide for the most useful things. For more information, [see this
 chapter on how to build and run the compiler](./building/how-to-build-and-run.md).
 
+> Did a compiler error message tell you to come here? If you want to create an ICE report,
+refer to [this section][contributing-bug-reports] and [open an issue][issue template].
+
+[issue template]: https://github.com/rust-lang/rust/issues/new/choose
+[contributing-bug-reports]: ./contributing.md#bug-reports
+
 ## Asking Questions
 
 The compiler team (or "t-compiler") usually hangs out in Zulip [in this
@@ -262,7 +268,7 @@ the code:
 *Note*: we don't use stable `rustfmt`; we use a pinned version with a special
 config, so this may result in different style from normal `rustfmt` if you have
 format-on-save turned on. It's a good habit to run `./x.py fmt` before every
-commit, as this reduces conflicts later. The pinned verson is built under
+commit, as this reduces conflicts later. The pinned version is built under
 `build/<target>/stage0/bin/rustfmt`, so if you want, you can use it for a
 single file or for format-on-save in your editor, which can be faster than `./x.py fmt`.
 
