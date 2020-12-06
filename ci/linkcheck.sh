@@ -28,4 +28,7 @@ else # running locally
   echo "Checking files changed in $COMMIT_RANGE: $CHANGED_FILES"
 fi
 
+# To show the number of broken lines.
+RUST_LOG=info
+
 exec mdbook-linkcheck $FLAGS -- $TRAVIS_BUILD_DIR
