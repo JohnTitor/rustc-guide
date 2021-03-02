@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - switch-to-gha
 
 jobs:
   deploy:
