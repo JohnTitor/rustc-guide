@@ -62,17 +62,11 @@ jobs:
 
       - name: Check build
         if: github.event_name != 'schedule'
-        run: |
-          git switch -c ci
-          git fetch origin master
-          git rebase origin/master
-          git log --oneline | head -n 10
-          mdbook build
+        run: mdbook build
 
       - name: Deploy to gh-pages
-        if: github.event_name == 'schedule' && github.repository == 'rust-lang/rustc-dev-guide'
+        #if: github.event_name == 'schedule' && github.repository == 'rust-lang/rustc-dev-guide'
         run: |
-          mdbook build
           touch "${{ env.DEPLOY_DIR }}/.nojekyll"
           cp CNAME "${{ env.DEPLOY_DIR }}"
           cd "${{ env.DEPLOY_DIR }}"
