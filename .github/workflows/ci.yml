@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           # linkcheck needs the base commit.
-          fetch-deps: 0
+          fetch-depth: 0
 
       - name: Cache binaries
         id: mdbook-cache
