@@ -11,10 +11,10 @@ if [ "$GITHUB_EVENT_NAME" = "schedule" ] ; then # running in scheduled job
   set -x
 elif [ "$CI" = "true" ] ; then # running in PR CI build
 
-  CHANGED_FILES=$(git diff --name-only origin/master... | tr '\n' ' ')
+  CHANGED_FILES=$(git diff --name-only $BASE_SHA... | tr '\n' ' ')
   FLAGS="--no-cache -f $CHANGED_FILES"
 
-  echo "Checking files changed in origin/master...: $CHANGED_FILES"
+  echo "Checking files changed in $BASE_SHA...: $CHANGED_FILES"
   set -x
 else # running locally
   COMMIT_RANGE=master...
