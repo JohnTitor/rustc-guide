@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  schedule:
+    #
+    - cron: '00 12 * * *'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    env:
+      MDBOOK_VERSION: 0.4.7
+      MDBOOK_LINKCHECK_VERSION: 0.7.2
+      MDBOOK_TOC_VERSION: 0.6.1
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Cache binaries
+        id: mdbook-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/bin
+          key: ${{ runner.os }}-${{ env.MDBOOK_VERSION }}--${{ env.MDBOOK_LINKCHECK_VERSION }}--${{ env.MDBOOK_TOC_VERSION }}
+
+      - name: Cache linkcheck
+        id: linkcheck-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/book/linkcheck
+          key: ${{ runner.os }}-${{ hashFiles('./book/linkcheck') }}
+
+      - name: Check line lengths
+        run: |
+          shopt -s globstar
+          MAX_LINE_LENGTH=100 bash ci/check_line_lengths.sh src/**/*.md
+
+      - name: Install latest nightly Rust toolchain
+        if: steps.mdbook-cache.outputs.cache-hit != 'true'
+        uses: actions-rs/toolchain@v1
+        with:
+            toolchain: nightly
+            override: true
+
+      - name: Install Dependencies
+        if: steps.mdbook-cache.outputs.cache-hit != 'true'
+        run: |
+          cargo install mdbook --version ${{ env.MDBOOK_VERSION }}
+          cargo install mdbook-linkcheck --version ${{ env.MDBOOK_LINKCHECK_VERSION }}
+          cargo install mdbook-toc --version ${{ env.MDBOOK_TOC_VERSION }}
+
+      - name: Check build
+        run: |
+          git switch -c ci
+          git fetch origin master
+          git rebase origin/master
+          git log --oneline | head -n 10
+          mdbook build

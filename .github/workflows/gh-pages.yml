@@ -1,0 +1,47 @@
+name: github pages
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      MDBOOK_VERSION: 0.4.7
+      MDBOOK_LINKCHECK_VERSION: 0.7.2
+      MDBOOK_TOC_VERSION: 0.6.1
+      DEPLOY_DIR: book/html
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Cache binaries
+        id: mdbook-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/bin
+          key: ${{ runner.os }}-${{ env.MDBOOK_VERSION }}--${{ env.MDBOOK_LINKCHECK_VERSION }}--${{ env.MDBOOK_TOC_VERSION }}
+
+      - name: Install latest nightly Rust toolchain
+        if: steps.mdbook-cache.outputs.cache-hit != 'true'
+        uses: actions-rs/toolchain@v1
+        with:
+            toolchain: nightly
+            override: true
+
+      - name: Install Dependencies
+        if: steps.mdbook-cache.outputs.cache-hit != 'true'
+        run: |
+          cargo install mdbook --version ${{ env.MDBOOK_VERSION }}
+          cargo install mdbook-linkcheck --version ${{ env.MDBOOK_LINKCHECK_VERSION }}
+          cargo install mdbook-toc --version ${{ env.MDBOOK_TOC_VERSION }}
+
+      - name: Build book
+        run: mdbook build
+
+      - name: Deploy to gh-pages
+        run: bash ci/gh-pages.sh
