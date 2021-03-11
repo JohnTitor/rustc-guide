@@ -11,6 +11,7 @@ on:
 jobs:
   date-check:
     runs-on: ubuntu-latest
+    if: github.repository == 'rust-lang/rustc-dev-guide'
 
     steps:
       - name: Checkout repo
